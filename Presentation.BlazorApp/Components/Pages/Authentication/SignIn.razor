@@ -1,0 +1,115 @@
+﻿@page "/sign-in"
+
+@layout AuthLayout
+
+
+
+<Title Name="Sign In" />
+
+<section class="section__auth">
+    <div class="title">
+        <h1>Welcome Back!</h1>
+    </div>
+
+    <hr />
+
+    <EditForm FormName="signInForm" EditContext="editContext" OnSubmit="SignInUser" method="post" novalidate>
+        <DataAnnotationsValidator />
+
+        <div class="form-group">
+            <label class="form-label" for="SignInForm.Email">Email Address</label>
+            <InputText type="email" @bind-Value="SignInForm.Email" class="form-input" placeholder="username@example.com" autocomplete="off" />
+        </div>
+        <div class="form-group">
+            <label class="form-label" for="SignInForm.Password">Password</label>
+            <InputText type="password" @bind-Value="SignInForm.Password" class="form-input" placeholder="Enter password" autocomplete="off" />
+        </div>
+
+        <div class="form-group form-checkbox-group">
+            <InputCheckbox @bind-Value="SignInForm.RememberMe" class="form-checkbox" />
+            <label class="form-label" for="SignInForm.RememberMe">Remember me</label>
+        </div>
+
+        <button type="submit" class="btn">Continue</button>
+
+        <div class="form-errormessage">
+            <span class="field-validation-error">@errorMessage</span>
+        </div>
+
+    </EditForm>
+
+</section>
+
+
+@code {
+
+    private string? errorMessage;
+
+    private EditContext editContext = default!;
+
+    [SupplyParameterFromForm]
+    private SignInModel SignInForm { get; set; } = default!;
+
+    [SupplyParameterFromQuery]
+    private string? ReturnUrl { get; set; }
+
+    [CascadingParameter]
+    private HttpContext HttpContext { get; set; } = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        SignInForm ??= new();
+        editContext = new EditContext(SignInForm);
+    }
+
+    public async Task SignInUser()
+    {
+        errorMessage = "";
+
+        if (!editContext.Validate())
+        {
+            errorMessage = "Invalid email address or password";
+            return;
+        }
+
+        var result = await AuthService.SignInUserAsync(SignInForm.Email, SignInForm.Password, SignInForm.RememberMe);
+
+        if (!result.Succeeded)
+        {
+            errorMessage = "Invalid email address or password";
+            return;
+        }
+
+        if (!string.IsNullOrWhiteSpace(ReturnUrl))
+        {
+            NavigationManager.NavigateTo(ReturnUrl, true);
+            return;
+        }
+
+        if (HttpContext.User.IsInRole("Admin"))
+        {
+            NavigationManager.NavigateTo("/admin/dashboard", true);
+            return;
+        }
+
+        if (HttpContext.User.IsInRole("Member"))
+        {
+            NavigationManager.NavigateTo("/me/about-me", true);
+            return;
+        }
+
+        NavigationManager.NavigateTo("/", true);
+
+    }
+
+    private sealed class SignInModel
+    {
+        [Required]
+        public string Email { get; set; } = "";
+        
+        [Required]
+        public string Password { get; set; } = "";
+        
+        public bool RememberMe { get; set; }
+    }
+}

@@ -14,3 +14,7 @@
 @using Presentation.BlazorApp.Components.Shared.Sections
 @using Microsoft.AspNetCore.Components.Sections
 @using System.ComponentModel.DataAnnotations
+@using Application.Abstractions.Identity
+
+@inject IAuthService AuthService
+@inject NavigationManager NavigationManager

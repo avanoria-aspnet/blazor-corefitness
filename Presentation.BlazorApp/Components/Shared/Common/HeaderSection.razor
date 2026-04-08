@@ -1,0 +1,39 @@
+﻿@using Microsoft.AspNetCore.Components.Authorization
+<section class="section__header">
+    <div class="logotype">
+        <NavLink href="" Match="NavLinkMatch.All"><img src="@Assets["images/logotype.png"]" alt="CoreFitness Logotype" /></NavLink>
+    </div>
+    <nav class="main-menu">
+        <ul class="menu">
+            <li class="menu-item">
+                <NavLink href="/fitnesscenters" class="menu-item-link">Fitness Centers</NavLink>
+            </li>
+            <li class="menu-item">
+                <NavLink href="/memberships" class="menu-item-link">Memberships</NavLink>
+            </li>
+            <li class="menu-item">
+                <NavLink href="/training" class="menu-item-link">Training</NavLink>
+            </li>
+        </ul>
+    </nav>
+    <nav class="account-menu">
+        <ul class="menu">
+
+            <li class="menu-item">
+                <NavLink href="/registration/sign-up" class="menu-item-link">Become Member</NavLink>
+            </li>
+
+            <li class="menu-item">
+                <NavLink href="/sign-in" class="btn accent">Sign In</NavLink>
+            </li>
+
+        </ul>
+    </nav>
+
+    <button id="mobile-menu-button" data-target="#mobile-menu-flyout" class="mobile-btn accent"></button>
+
+</section>
+
+@code {
+
+}
